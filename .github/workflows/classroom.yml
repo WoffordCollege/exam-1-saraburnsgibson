@@ -1,0 +1,90 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Get Top of Column
+      id: get-top-of-column
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Get Top of Column
+        setup-command: ''
+        command: "./gradlew test --tests edu.wofford.ConnectFourTest.testGetTopOfColumn"
+        timeout: 2
+        max-score: 1
+    - name: Get Height of Column
+      id: get-height-of-column
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Get Height of Column
+        setup-command: ''
+        command: "./gradlew test --tests edu.wofford.ConnectFourTest.testGetHeightOfColumn"
+        timeout: 2
+        max-score: 1
+    - name: Drop Token 1
+      id: drop-token-1
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Drop Token 1
+        setup-command: ''
+        command: "./gradlew test --tests edu.wofford.ConnectFourTest.testDropToken1"
+        timeout: 2
+        max-score: 1
+    - name: Drop Token 2
+      id: drop-token-2
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Drop Token 2
+        setup-command: ''
+        command: "./gradlew test --tests edu.wofford.ConnectFourTest.testDropToken2"
+        timeout: 2
+        max-score: 1
+    - name: Drop Token 3
+      id: drop-token-3
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Drop Token 3
+        setup-command: ''
+        command: "./gradlew test --tests edu.wofford.ConnectFourTest.testDropToken3"
+        timeout: 2
+        max-score: 1
+    - name: Get Result
+      id: get-result
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Get Result
+        setup-command: ''
+        command: "./gradlew test --tests edu.wofford.ConnectFourTest.testGetResult"
+        timeout: 2
+        max-score: 3
+    - name: To String
+      id: to-string
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: To String
+        setup-command: ''
+        command: "./gradlew test --tests edu.wofford.ConnectFourTest.testToString"
+        timeout: 2
+        max-score: 3
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        GET-TOP-OF-COLUMN_RESULTS: "${{steps.get-top-of-column.outputs.result}}"
+        GET-HEIGHT-OF-COLUMN_RESULTS: "${{steps.get-height-of-column.outputs.result}}"
+        DROP-TOKEN-1_RESULTS: "${{steps.drop-token-1.outputs.result}}"
+        DROP-TOKEN-2_RESULTS: "${{steps.drop-token-2.outputs.result}}"
+        DROP-TOKEN-3_RESULTS: "${{steps.drop-token-3.outputs.result}}"
+        GET-RESULT_RESULTS: "${{steps.get-result.outputs.result}}"
+        TO-STRING_RESULTS: "${{steps.to-string.outputs.result}}"
+      with:
+        runners: get-top-of-column,get-height-of-column,drop-token-1,drop-token-2,drop-token-3,get-result,to-string
