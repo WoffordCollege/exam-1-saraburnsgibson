@@ -1,5 +1,9 @@
+/*
+ Sara Burns Gibson
+ Exam 1 
+ COSC 410
+ */
 package edu.wofford;
-
 
 /**
  * This class provides implements a game board for Connect Four.
@@ -112,11 +116,19 @@ public class ConnectFour {
      * @return the top of the column
      */
     public Location getTopOfColumn(int column) {
-        // Question 1
-        // TODO
-        
-        return Location.EMPTY;
-    }
+        /*
+        //Question 1
+        I need to return the top token type for a given column. If it's empty, return EMPTY
+        Loop from the top to bottom. If I find a token- return type
+        If the loop ends without finding a token, return empt
+        */
+            for (int row = 0; row < board.length; row++) {
+                if (board[row][column] != Location.EMPTY) {
+                    return board[row][column];
+                }
+            }
+            return Location.EMPTY; //keep!!!
+        }
     
     /**
      * This method returns the height of the specified column.
@@ -127,10 +139,20 @@ public class ConnectFour {
      * @return the height of the column
      */
     public int getHeightOfColumn(int column) {
-        // Question 2
-        // TODO
-        
-        return 0;
+        /**
+        //Question 2
+        Calculate  height of tokens in a spec column
+        loop through each row in the column and count non-empty slots
+        could start from the top, but either direction works bc just counting?
+        keep track of the count and return it after loop!
+        */
+        int height = 0;
+        for (int row = 0; row < board.length; row++) {
+            if (board[row][column] != Location.EMPTY) {
+                height++;
+            }
+        }
+        return height;
     }
     
     /**
@@ -144,9 +166,28 @@ public class ConnectFour {
      * @param column the column for the token
      */
     public void dropToken(int column) {
-        // Question 3
-        // TODO
-        
+        /**
+        //Question 3
+        Drop a token into a specified column and change player after
+        if column index is out of range- ignore it. If full- throw ColunFullException
+        check if the column is valid first. Then start from the bottom row and look for empty spot
+        If find empty spot- place the token based on player's turn. If not- throw  exception.
+        After dropping- switch turn  
+        */
+        if (column < 0 || column >= board[0].length) {
+            return;
+        }
+
+        for (int row = board.length - 1; row >= 0; row--) {
+            if (board[row][column] == Location.EMPTY) {
+                board[row][column] = redTurn ? Location.RED : Location.BLACK;
+                redTurn = !redTurn;
+                return;
+            }
+
+        }
+
+        throw new ColumnFullException(); // execpt
     }
     
     /**
@@ -168,10 +209,36 @@ public class ConnectFour {
         // Note: You may find it convenient to use another method of
         //       this class to determine whether someone has won 
         //       along a column.
+
+        /*
+        check for: 4 tokens in a row v is winner, is tie, or still going
+        loop through each column and check for 4 consecutive tokens vert
+        use a counter to keep track of consecutive tokens and reset when new token type starts
+        If I get 4 in a row- check if RED or BLACK and return the result
+        If no 4-in-a-row and board isn't full- return NONE.
+         */
         
-        // TODO
-        
-        return Result.NONE;
+        for (int colNum = 0; colNum < board[0].length; colNum++) {
+            int count = 0;
+            Location lastLoc = Location.EMPTY;
+
+            for (int rowNum = 0; rowNum < board.length; rowNum++) {
+                if (board[rowNum][colNum] == lastLoc && lastLoc != Location.EMPTY) {
+                    count++;
+                    if (count == 4) {
+                        if (lastLoc == Location.RED) {
+                            return Result.REDWIN;
+                        } else {
+                            return Result.BLACKWIN;
+                        }
+                    }
+                } else {
+                    count = 1;
+                    lastLoc = board[rowNum][colNum];
+                }
+            }
+        }
+        return Result.NONE; //keep!
     }
     
     /**
@@ -192,10 +259,31 @@ public class ConnectFour {
      */
     public String toString() {
         // Question 5
-        // TODO
-        
-        return "";
+        /**
+        make board as a string. String builder!
+        loop over each row and column and build  string showing tokens and empty spaces
+        rows have tokens separated by |
+        nested loops to build this string rows and columbs
+        R B or " "
+        ---------------
+        */
+        StringBuilder sb = new StringBuilder();
+        for (int rowNum = 0; rowNum < board.length; rowNum++) {
+            for (int colNum = 0; colNum < board[0].length; colNum++) {
+                sb.append("|");
+                if (board[rowNum][colNum] == Location.RED) {
+                    sb.append("R");
+                } else if (board[rowNum][colNum] == Location.BLACK) {
+                    sb.append("B");
+                } else {
+                    sb.append(" ");
+                }
+            }
+            sb.append("|\n");
+        }
+        sb.append("---------------");
+        return sb.toString();
     }
-
-
 }
+
+
